@@ -219,8 +219,6 @@ def carroCompra(request):
             usuario = request.user.username
             Compra.objects.filter(Usuario = usuario ).delete()
             historial = HistorialCompras.objects.all().order_by('-fechaCompra')  # Obtener todos los objetos de HistorialCompras
-            response = requests.get('http://127.0.0.1:8000/api/HistorialCompras/')
-            historial = response.json()
             
             aux = {
                 'lala': historial,  # Agregar historial al contexto
