@@ -4,7 +4,7 @@ from .models import *
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from datetime import datetime
-# from django_recaptcha.fields import ReCaptchaField
+from captcha import *
 
 
 class TipoUsuarioForm(ModelForm):
@@ -140,6 +140,10 @@ class CustomUserCreationForm(UserCreationForm):
         model = User
         fields = ['username','email','password1','password2']
 
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=100)
+    password = forms.CharField(widget=forms.PasswordInput)
 
 
 

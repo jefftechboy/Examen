@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'axes',
     'cloudinary',
     'cloudinary_storage',
+    'captcha',
 ]
 
 
@@ -90,7 +91,7 @@ ROOT_URLCONF = 'GrupoZero.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -175,8 +176,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 import os 
 MEDIA_URL = '/'
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-LOGIN_REDIRECT_URL='/'
-LOGOUT_REDIRECT_URL='/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'grupozero2024@gmail.com'
+EMAIL_HOST_PASSWORD = 'e je i s t t g u x x s e z t x'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+LOGOUT_REDIRECT_URL = 'inicio'  # Ajusta 'inicio' al nombre de la URL de la página de inicio para clientes
+LOGIN_REDIRECT_URL = '/inicio/'
+
+# Configuración para Simple Captcha
+CAPTCHA_FONT_SIZE = 30
+CAPTCHA_LETTER_ROTATION = (-10, 10)
+CAPTCHA_BACKGROUND_COLOR = '#ffffff'
+CAPTCHA_FOREGROUND_COLOR = '#001100'
+CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots',)
+CAPTCHA_LENGTH = 5
+CAPTCHA_TIMEOUT = 5
+CAPTCHA_IMAGE_BEFORE_FIELD = True

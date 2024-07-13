@@ -91,184 +91,181 @@
              
                 
 
-        function genPDF() {
-            var doc = new jsPDF();
-            var y = 20; // Posición inicial en el eje Y
-            var pdfText = ""; // Cadena para almacenar el texto del PDF
+                function genPDF() {
+                    var doc = new jsPDF();
+                    var y = 20; // Posición inicial en el eje Y
+                    var pdfText = ""; // Cadena para almacenar el texto del PDF
 
-            // Encabezado del documento
-            doc.setFontSize(30);
-            doc.text(20, 10, 'Compra Zero');
-            pdfText += "Compra Zero\n";
-            doc.setFontSize(14);
+                    // Encabezado del documento
+                    doc.setFontSize(30);
+                    doc.text(20, 10, 'Compra Zero');
+                    pdfText += "Compra Zero\n";
+                    doc.setFontSize(14);
 
-            // Obtener la fecha y hora actual
-            var now = new Date();
-            var fecha = now.toLocaleDateString('es-CL');
-            var hora = now.toLocaleTimeString('es-CL');
+                    // Obtener la fecha y hora actual
+                    var now = new Date();
+                    var fecha = now.toLocaleDateString('es-CL');
+                    var hora = now.toLocaleTimeString('es-CL');
 
-            // Escribir la fecha y hora en el documento
-            doc.text(130, 10, 'Fecha: ' + fecha + ' ' + hora);
-            pdfText += 'Fecha: ' + fecha + ' ' + hora + "\n";
+                    // Escribir la fecha y hora en el documento
+                    doc.text(130, 10, 'Fecha: ' + fecha + ' ' + hora);
+                    pdfText += 'Fecha: ' + fecha + ' ' + hora + "\n";
 
-            // Separador horizontal debajo del título y la fecha
-            y += 10; // Ajuste vertical para espacio
-            doc.setLineWidth(0.5);
-            doc.line(20, y, 190, y); // Línea horizontal
-            y += 10; // Ajuste vertical después de la línea
+                    // Separador horizontal debajo del título y la fecha
+                    y += 10; // Ajuste vertical para espacio
+                    doc.setLineWidth(0.5);
+                    doc.line(20, y, 190, y); // Línea horizontal
+                    y += 10; // Ajuste vertical después de la línea
 
-            // Recorrer cada fila de la tabla y escribir detalles de compra
-            document.querySelectorAll('tbody tr').forEach(function(row, index) {
-                var nombre = row.cells[1].innerText; // Nombre está en la segunda celda
-                var precio = row.cells[2].innerText; // Precio está en la tercera celda
-                var cantidad = row.cells[3].querySelector('input').value; // Cantidad está en el input dentro de la tercera celda
-                var total = row.cells[4].innerText; // Total está en la cuarta celda
+                    // Recorrer cada fila de la tabla y escribir detalles de compra
+                    document.querySelectorAll('tbody tr').forEach(function(row, index) {
+                        var nombre = row.cells[1].innerText; // Nombre está en la segunda celda
+                        var precio = row.cells[2].innerText; // Precio está en la tercera celda
+                        var cantidad = row.cells[3].querySelector('input').value; // Cantidad está en el input dentro de la tercera celda
+                        var total = row.cells[4].innerText; // Total está en la cuarta celda
 
-                // Escribir la información en el documento PDF
-                doc.setFontSize(12);
-                doc.text(20, y, 'Obra: ' + nombre);
-                doc.text(80, y, 'Precio: $' + precio);
-                doc.text(120, y, 'Cantidad: ' + cantidad);
-                doc.text(170, y, 'Total: $' + total);
+                        // Escribir la información en el documento PDF
+                        doc.setFontSize(12);
+                        doc.text(20, y, 'Obra: ' + nombre);
+                        doc.text(80, y, 'Precio: $' + precio);
+                        doc.text(120, y, 'Cantidad: ' + cantidad);
+                        doc.text(170, y, 'Total: $' + total);
 
-                pdfText += 'Obra: ' + nombre + ' | Precio: $' + precio + ' | Cantidad: ' + cantidad + ' | Total: $' + total + "\n";
+                        pdfText += 'Obra: ' + nombre + ' | Precio: $' + precio + ' | Cantidad: ' + cantidad + ' | Total: $' + total + "\n";
 
-                // Ajustar la posición Y para la siguiente línea
-                y += 15;
-            });
-
-            // Separador horizontal antes de subtotal, IVA y total
-            doc.setLineWidth(0.5);
-            doc.line(20, y, 190, y); // Línea horizontal
-            y += 10; // Ajuste vertical después de la línea
-
-            // Agregar información de subtotal, IVA y total al final del documento
-            var subtotal = document.getElementById('subtotal').innerText;
-            var iva = document.getElementById('iva').innerText;
-            var totalAmount = document.getElementById('total').innerText;
-
-            doc.setFontSize(14);
-            doc.text(20, y, 'Subtotal: $' + subtotal);
-            pdfText += 'Subtotal: $' + subtotal + "\n";
-            y += 10;
-            doc.text(20, y, 'IVA:      $' + iva);
-            pdfText += 'IVA: $' + iva + "\n";
-            y += 10;
-            doc.text(20, y, 'Total:    $' + totalAmount);
-            pdfText += 'Total: $' + totalAmount + "\n";
-
-            // Guardar el documento PDF con el nombre 'comprobante.pdf'
-            doc.save('comprobante.pdf');
-
-            // Asignar el texto al input de solo lectura
-            document.getElementById('id_texto_pdf').value = pdfText;
-
-            // Mostrar el contenido del PDF en un contenedor (opcional)
-            document.getElementById('pdfContentDisplay').innerText = pdfText;
-
-        }
-
-
-        // Función para generar PDF después de completar el pago con PayPal
-        function eliminarCompras(){
-            window.location.href = "/cuentaCliente/";
-        }
-
-        // PAYPAL
-        paypal.Button.render({
-                env: 'sandbox',
-                client: {
-                    sandbox: 'AU1up2OjnNGvn627m-I63NVWH8JIi2pmwjGuqS2eckwVI0Dt6H_C4YlKoQv9jCej6kHTZq5VxrXcfWZ1',
-                    production: 'production_client_id'
-                },
-                locale: 'en_US',
-                style: {
-                    size: 'medium',
-                    color: 'white',
-                    shape: 'pill',
-                },
-                commit: true,
-                payment: function (data, actions) {
-                    // Obtener el total actualizado
-                    var total = parseFloat(document.getElementById('total').innerText);
-                    
-                    // Crear el pago con el total
-                    return actions.payment.create({
-                        transactions: [{
-                            amount: {
-                                total: total.toFixed(2),
-                                currency: 'USD'
-                            }
-                        }]
+                        // Ajustar la posición Y para la siguiente línea
+                        y += 15;
                     });
-                },
-                onAuthorize: function (data, actions) {
-                    return actions.payment.execute().then(function () {
-                        Swal.fire({
-                            title: "Compra exitosa",
-                            text: "recibiras un comprobante",
-                            icon: "success"
-                        });
-                        genPDF(); // Llamar a la función para generar el PDF
-                        setTimeout(function() {
-                            document.getElementById('botonEnviar').style.display = 'inline-block'; // Mostrar el botón
-                        })
-                
-                    });
+
+                    // Separador horizontal antes de subtotal, IVA y total
+                    doc.setLineWidth(0.5);
+                    doc.line(20, y, 190, y); // Línea horizontal
+                    y += 10; // Ajuste vertical después de la línea
+
+                    // Agregar información de subtotal, IVA y total al final del documento
+                    var subtotal = document.getElementById('subtotal').innerText;
+                    var iva = document.getElementById('iva').innerText;
+                    var totalAmount = document.getElementById('total').innerText;
+
+                    doc.setFontSize(14);
+                    doc.text(20, y, 'Subtotal: $' + subtotal);
+                    pdfText += 'Subtotal: $' + subtotal + "\n";
+                    y += 10;
+                    doc.text(20, y, 'IVA:      $' + iva);
+                    pdfText += 'IVA: $' + iva + "\n";
+                    y += 10;
+                    doc.text(20, y, 'Total:    $' + totalAmount);
+                    pdfText += 'Total: $' + totalAmount + "\n";
+
+                    // Guardar el documento PDF con el nombre 'comprobante.pdf'
+                    doc.save('comprobante.pdf');
+
+                    // Asignar el texto al input de solo lectura
+                    document.getElementById('id_texto_pdf').value = pdfText;
+
+                    // Enviar el formulario
+                    document.getElementById('form').submit();
                 }
-            }, '#paypal-button');
-            function obtenerValorDolar() {
-    // URL de la API de Mindicador.cl para el dólar
-    const apiUrl = 'https://mindicador.cl/api/dolar';
 
-    // Realizar solicitud HTTP GET utilizando Fetch API
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            // Obtener el valor del dólar desde la respuesta JSON
-            const valorDolar = data.serie[0].valor;
 
-            // Obtener el valor actual del total desde el elemento <p id="total">
-            const totalElement = document.getElementById('total');
-            const totalValue = parseFloat(totalElement.textContent.replace('$', ''));
+                // Función para generar PDF después de completar el pago con PayPal
+                function eliminarCompras(){
+                    window.location.href = "/cuentaCliente/";
+                }
+                function LimpiarCarritoCarrito(){
+                    window.location.href = '/eliminarCarroCompra/';
+                }
+                // PAYPAL
+                paypal.Button.render({
+                        env: 'sandbox',
+                        client: {
+                            sandbox: 'AU1up2OjnNGvn627m-I63NVWH8JIi2pmwjGuqS2eckwVI0Dt6H_C4YlKoQv9jCej6kHTZq5VxrXcfWZ1',
+                            production: 'production_client_id'
+                        },
+                        locale: 'en_US',
+                        style: {
+                            size: 'medium',
+                            color: 'white',
+                            shape: 'pill',
+                        },
+                        commit: true,
+                        payment: function (data, actions) {
+                            // Obtener el total actualizado
+                            var total = parseFloat(document.getElementById('total').innerText);
+                            
+                            // Crear el pago con el total
+                            return actions.payment.create({
+                                transactions: [{
+                                    amount: {
+                                        total: total.toFixed(2),
+                                        currency: 'USD'
+                                    }
+                                }]
+                            });
+                        },
+                        onAuthorize: function (data, actions) {
+                            return actions.payment.execute().then(function () {
+                                Swal.fire({
+                                    title: "Compra exitosa",
+                                    text: "recibiras un comprobante",
+                                    icon: "success"
+                                });
+                                genPDF(); // Llamar a la función para generar el PDF
+                                setTimeout(function() {
+                                    document.getElementById('botonEnviar').style.display = 'inline-block'; // Mostrar el botón
+                                })
+                        
+                            });
+                        }
+                    }, '#paypal-button');
+                    function obtenerValorDolar() {
+                // URL de la API de Mindicador.cl para el dólar
+                const apiUrl = 'https://mindicador.cl/api/dolar';
 
-            // Calcular el nuevo valor del dolar multiplicando por el valor del dólar
-            const nuevoValorDolar = totalValue * valorDolar;
+                // Realizar solicitud HTTP GET utilizando Fetch API
+                fetch(apiUrl)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Obtener el valor del dólar desde la respuesta JSON
+                            const valorDolar = data.serie[0].valor;
 
-            // Actualizar el contenido del elemento <p id="dolar"> con el nuevo valor del dolar
-            const elementoDolar = document.getElementById('dolar');
-            elementoDolar.textContent = `$${nuevoValorDolar.toFixed(2)}`;
+                            // Obtener el valor actual del total desde el elemento <p id="total">
+                            const totalElement = document.getElementById('total');
+                            const totalValue = parseFloat(totalElement.textContent.replace('$', ''));
 
-            // Si deseas mantener actualizado el campo total (opcional)
-            // totalElement.textContent = `$${totalValue.toFixed(2)}`;
-        })
-        .catch(error => {
-            console.error('Error al obtener el valor del dólar:', error);
-        });
-}
+                            // Calcular el nuevo valor del dolar multiplicando por el valor del dólar
+                            const nuevoValorDolar = totalValue * valorDolar;
 
-        // Llamar a la función para obtener el valor del dólar al cargar la página
-        window.addEventListener('DOMContentLoaded', obtenerValorDolar);
+                            // Actualizar el contenido del elemento <p id="dolar"> con el nuevo valor del dolar
+                            const elementoDolar = document.getElementById('dolar');
+                            elementoDolar.textContent = `$${nuevoValorDolar.toFixed(2)}`;
+
+                            // Si deseas mantener actualizado el campo total (opcional)
+                            // totalElement.textContent = `$${totalValue.toFixed(2)}`;
+                        })
+                        .catch(error => {
+                            console.error('Error al obtener el valor del dólar:', error);
+                        });
+                }   
+
+                // Llamar a la función para obtener el valor del dólar al cargar la página
+                window.addEventListener('DOMContentLoaded', obtenerValorDolar);
 
                 
+
+
+
         </script>
         {% endblock %}
         
 
-        <form  method="POST" action="">
+        <form method="POST" id="form" action="">
             {% csrf_token %}
-            <div>
-                <input type="hidden"  name="{{ historial.fechaCompra.name }}" value="{% now 'Y-m-d' %}">
-            </div>
-            <div>
-                <input type="hidden" name="{{ historial.Usuario.name }}" value="{{ user.username }}">
-            </div>
-            <div>
-                <input  type="hidden" name="{{ historial.datos.name }}" id="id_texto_pdf" value="">
-            </div>
-            <button type="submit" style="background-color: grey; color: white; width: 150px;
-            height: 50px; margin-left: 50px;margin-left: 740px; border-radius: 20px;margin-top: 100px;">Ir a mi cuenta</button>
+            <input  type="hidden" name="{{ historial.fechaCompra.name }}" value="{% now 'Y-m-d' %}">
+            <input  type="hidden" name="{{ historial.Usuario.name }}" value="{{ user.username }}">
+            <input  type="hidden" name="{{ historial.datos.name }}" id="id_texto_pdf" value="">
         </form>
+
 
         <!-- Carrito de Compras -->
         <div class="container-fluid py-5" style="background-color: rgb(252, 253, 249); width: 1300px; margin-top: 40px; margin-bottom: 40px;">

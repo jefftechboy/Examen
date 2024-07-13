@@ -160,6 +160,10 @@ def cuentaCliente(request):
 
 
 
+
+
+
+
 def tienda(request):
 
     obras = Obra.objects.all()
@@ -212,6 +216,8 @@ def carroCompra(request):
         formulario = HistorialComprasForm(request.POST)
         if formulario.is_valid():
             formulario.save()
+            usuario = request.user.username
+            Compra.objects.filter(Usuario = usuario ).delete()
             historial = HistorialCompras.objects.all().order_by('-fechaCompra')  # Obtener todos los objetos de HistorialCompras
             response = requests.get('http://127.0.0.1:8000/api/HistorialCompras/')
             historial = response.json()
@@ -1147,8 +1153,7 @@ def registro(request,user):
             usuarioIngreso.groups.add(group)
             group = Group.objects.get(name='ClientesNoAutentificados')
             usuarioIngreso.groups.add(group)
-            login(user)
-            return redirect(to="inicio")
+            return redirect(to="login")
         data["form"] = formulario
     return render(request,'registration/registro.html',data)
 
@@ -1184,7 +1189,6 @@ def registro(request):
                     pass
             
             if user is not None:
-                login(request)  # Inicia sesión
                 
                 # Asignación de grupos al usuario
                 usuario_ingreso = User.objects.get(username=username)
@@ -1193,7 +1197,7 @@ def registro(request):
                 group_clientes_no_autentificados = Group.objects.get(name='ClientesNoAutentificados')
                 usuario_ingreso.groups.add(group_clientes_no_autentificados)
                 
-                return redirect('inicio')  # Redirige a la página de inicio
+                return redirect('login')  # Redirige a la página de inicio
         
         data['form'] = formulario
     
@@ -1210,4 +1214,13 @@ def detalleObra(request,id):
     return render(request,'core/informacionCompra.html',aux)
 
 
+
+def eliminarCarroCompra(request):
+    usuario = request.user.username
+    Compra.objects.filter(Usuario = usuario ).delete()
+    return render(request,'core/carroCompra.html')
+
+@login_required
+def profile(request):
+    return render(request, 'profile.html')
 

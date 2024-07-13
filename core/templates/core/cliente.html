@@ -69,7 +69,33 @@
             // Guardar el PDF
             doc.save('chekeo.pdf');
         }
-</script>
+
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const userId = {{ user.id }};
+            const apiUrl = `https://rickandmortyapi.com/api/character/${userId}`;
+        
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const imageUrl = data.image;
+                    const imgElement = document.getElementById('character-image');
+                    imgElement.src = imageUrl;
+                    imgElement.alt = data.name;
+                    document.getElementById('character-name').textContent = `Name: ${data.name}`;
+                    document.getElementById('character-status').textContent = `Status: ${data.status}`;
+                    document.getElementById('character-species').textContent = `Species: ${data.species}`;
+                })
+                .catch(error => console.error('Error fetching the character data:', error));
+        });
+
+        
+
+        
+    
+    
+    </script>
 {% endblock %}
 
 <!-- Estilos adicionales para mejorar la apariencia -->
@@ -82,26 +108,25 @@
                 <div class="profile-image">
                     {% for cuenta in cuentasAutentificadas %}
                         {% if cuenta.NombreCliente == user.username %} 
-                            <img src="{% get_media_prefix %}{{ cuenta.imagenAutentificacion }}" style="height: 100px;width: 100px; margin-bottom: 10px;">
-                        {% endif %}
+                            <h2 class="mb-4">Información Personal</h2>
+                            <!-- AUTENTIFICADOS -->
+                            <img id="character-image" alt="Character Image" />
+                            <p id="character-name"></p>
+                            <p id="character-status"></p>
+                            <p id="character-species"></p>
+                            {% endif %}
                     {% endfor %}
                     {% if user.is_authenticated %}
                         {% for group in user.groups.all %}
                             {% if group.name == 'ClientesNoAutentificados' %}
-                                <img src="{% static 'core/img/FotosGaleria/ClienteGenerico.jpg' %}" style="height: 100px;width: 100px; margin-bottom: 10px;">
-                            {% endif %}
+                                <!-- NO AUTENTIFICADOS -->
+                                <img id="character-image" alt="Character Image" />
+                                <p id="character-name"></p>
+                                <p id="character-status"></p>
+                                <p id="character-species"></p>
+                                {% endif %}
                         {% endfor %}
                     {% endif %}
-                </div>
-                <div class="profile-details">
-                    {% for cuenta in cuentasAutentificadas %}
-                        {% if cuenta.NombreCliente == user.username %} 
-                            <p><strong>Nombre:</strong> {{ user.username }}</p>
-                            <p><strong>Correo Electrónico:</strong> {{ cuenta.Correo }}</p>
-                            <p><strong>Número de Teléfono:</strong> {{ cuenta.Telefono }}</p>
-                            <p><strong>Dirección:</strong> {{ cuenta.Direccion }}</p>                            
-                        {% endif %}
-                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -119,19 +144,21 @@
                     </thead>
                     <tbody>
                         {% for aux in lala %}
-                        <tr>
-                            <th>
-                                {{ aux.fechaCompra }}
-                            </th>
-                            <th>
-                                {{ aux.Usuario }}
-                            </th>
-                            <th>
-                                <div class="text-center">
-                                    <button onclick="genPDF('{{ aux.datos }}')" class="btn btn-primary">Generar PDF</button>
-                                </div>
-                            </th>
-                        </tr>
+                        {% if aux.Usuario == user.username %}
+                            <tr>
+                                <th>
+                                    {{ aux.fechaCompra }}
+                                </th>
+                                <th>
+                                    {{ aux.Usuario }}
+                                </th>
+                                <th>
+                                    <div class="text-center">
+                                        <button onclick="genPDF('{{ aux.datos }}')" class="btn btn-primary">Generar PDF</button>
+                                    </div>
+                                </th>
+                            </tr>
+                        {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>
