@@ -965,9 +965,9 @@ def eliminarSolicitudObra(request,id):
 
 def agregarAutentificacion(request):
 
-    response = requests.get('http://127.0.0.1:8000/api/HistorialCompras/')
-    historial = response.json()
-    
+
+    historial = HistorialCompras.objects.all().order_by('-fechaCompra')  # Obtener todos los objetos de HistorialCompras
+
     aux = {
         'lala': historial,  # Agregar historial al contexto
         'form': AutentificacionForm(),
